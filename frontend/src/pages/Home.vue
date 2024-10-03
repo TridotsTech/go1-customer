@@ -46,14 +46,7 @@
    display: flex;
    width: 100%;
    transition: margin-left 0.3s ease;
- }
- /* .layout {
-   display: flex;
-   width: 100%;
-   height: 100vh;
-   transition: margin-left 0.3s ease;
- } */
- 
+ } 
  .main-content {
    flex-grow: 1;
    padding: 1.25rem;
@@ -76,10 +69,10 @@
    display: flex;
    justify-content: space-between;
    padding: 10px;
-   border-bottom: 1px solid #e5e7eb; /* Gray bottom border */
+   border-bottom: 1px solid #e5e7eb; 
  }
  
  .row:hover {
-   background-color: #f9fafb; /* Light gray background on hover */
+   background-color: #f9fafb;
  }
  </style> 

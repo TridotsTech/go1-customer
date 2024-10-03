@@ -2,9 +2,8 @@
   <div class="max-h-screen flex items-center justify-center">
     <Card class="w-full max-w-md mt-4 border-none shadow-none">
       <div class="flex justify-center p-5">
-        <Avatar :shape="'square'" image="/files/G0-1-Customer portal.png" label="EY" size="2xl" />
-      <div class="h-8 w-8"></div>
-      </div>
+        <Avatar :shape="'square'" image="/G0-1-Customer portal.png" label="EY" size="2xl" />       
+      </div>     
       <h1 class="text-center text-3xl font-semibold text-gray-900 mb-4">Login to Go1 Customer</h1>
       <form class="flex flex-col space-y-2 w-full" @submit.prevent="submit">
         <Input required name="email" type="text" placeholder="johndoe@email.com" label="User ID" />

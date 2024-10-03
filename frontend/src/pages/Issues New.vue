@@ -8,7 +8,7 @@
       </div>
     </div>
     <div :class="['layout', { collapsed: isSidebarCollapsed }]">
-      <LeftSidebar :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
+      <LeftSidebar class="z-[8]" :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
       <div class="main-content p-5" style="padding-left: 150px; padding-right: 150px;">
         <div class="bg-white border rounded-lg p-6 space-y-6 pb-[2.625rem]">
           <div class="float-left mb-1 text-xl font-bold text-gray-800 -mt-2" style="font-size: 1.35rem">
@@ -18,13 +18,14 @@
             </p>
           </div>
 
-          <div class="border-b pb-7 pt-10"></div>
+          <div class="border-b pb-7 "></div>
           <div class="p-2">
             <FormControl :type="'text'" size="md" variant="subtle" placeholder="subject" label="Subject"
               v-model="subject" class="mb-5" />
 
-              <TextEditor :fixedMenu="true" class="custom-editor " placeholder="Describe your problem..."
+            <TextEditor :fixedMenu="true" class="custom-editor " placeholder="Describe your problem..."
               @change="val => newTicket.description = val" />
+
 
             <div class="float-right flex gap-4 button-container">
               <Button :variant="'subtle'" theme="gray" size="md" label="Discard" @click="cancelEditing" />
@@ -41,7 +42,7 @@
 import LeftSidebar from '@/components/Custom Layout/LeftSidebar.vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Breadcrumbs, Button, FormControl, TextEditor } from 'frappe-ui';
+import { Breadcrumbs, Button, FormControl, TextEditor, createResource } from 'frappe-ui';
 
 export default {
   components: {
@@ -57,15 +58,11 @@ export default {
     const subject = ref('');
     const status = ref('');
     const newTicket = ref({
-      description: '' // Capturing description from TextEditor
-      });
-    // const description = ref('');
+      description: ''
+    });
     const priority = ref('');
     const customer = ref('');
-    const customOption = ref([]);
     const priorityOption = ref([]);
-    
-
     const breadcrumbsList = ref([
       { label: 'Issues', route: { name: 'issue' } },
       { label: 'Create Issue', route: {} },
@@ -91,13 +88,12 @@ export default {
       const issueData = {
         subject: subject.value,
         status: status.value || 'Open',
-        priority: priority.value,
-        description: newTicket.value.description,       
-        customer: customer.value,
+        priority: priority.value || 'Medium',
+        description: newTicket.value.description,
       };
-     
-
-
+      if (customer.value !== 'Administrator') {
+        issueData.customer = customer.value;
+      }
       try {
         const response = await fetch('/api/resource/Issue', {
           method: 'POST',
@@ -112,31 +108,25 @@ export default {
       }
     };
 
+
     const fetchCustomers = async () => {
+      const issues_customer = createResource({
+        url: 'go1_customer.go1_customer.api.api.getcustomer',
+        method: 'get',
+        cache: ['true'],
+        auto: ['true'],
+      });
+
       try {
-        const response = await fetch('/api/resource/Customer?fields=["name"]');
-        const customerData = await response.json();
-        customOption.value = customerData.data.map((customer) => ({
-          label: customer.name,
-          value: customer.name,
-        }));
+        const data = await issues_customer.fetch();
+        if (data) {
+          customer.value = data;
+        }
       } catch (error) {
-        console.error('Error fetching customers:', error);
+        console.error('Error fetching customer data:', error);
       }
     };
 
-    const fetchPriorities = async () => {
-      try {
-        const response = await fetch('/api/resource/Issue Priority?fields=["name"]');
-        const priorityData = await response.json();
-        priorityOption.value = priorityData.data.map((priority) => ({
-          label: priority.name,
-          value: priority.name,
-        }));
-      } catch (error) {
-        console.error('Error fetching priorities:', error);
-      }
-    };
 
     const toggleSidebar = () => {
       isSidebarCollapsed.value = !isSidebarCollapsed.value;
@@ -144,19 +134,16 @@ export default {
 
     onMounted(async () => {
       await fetchCustomers();
-      await fetchPriorities();
     });
 
     return {
       isSidebarCollapsed,
       subject,
       status,
-      newTicket, // Bind the reactive description object
-      // description,
+      newTicket,
       priority,
       customer,
-      customOption,
-      priorityOption,
+
       breadcrumbsList,
       statusOptions,
       cancelEditing,
@@ -187,7 +174,7 @@ export default {
   padding: 1.25rem;
   transition: margin-left 0.3s ease;
   margin-left: 220px;
-  /* Default width of sidebar */
+
 }
 
 .head-content {
@@ -195,17 +182,17 @@ export default {
   padding: 0px;
   transition: margin-left 0.3s ease;
   margin-left: 220px;
-  /* Default width of sidebar */
+ 
 }
 
 .collapsed .main-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+ 
 }
 
 .collapsed .head-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+ 
 }
 
 .status-dot {
@@ -213,10 +200,10 @@ export default {
   height: 10px;
   border-radius: 50%;
   border-width: var(--border-width, 2px);
-  /* Use dynamic border width */
+ 
 }
 
-/* Text editor styles */
+
 .custom-editor {
   border: 1px solid #d1d5db;
   border-radius: 13px;
@@ -237,9 +224,7 @@ export default {
 
 .button-container {
   display: flex;
-  justify-content: flex-end;
-  /* Align buttons to the right */
-  margin-top: 20px;
-  /* Adjust margin as necessary */
+  justify-content: flex-end;  
+  margin-top: 20px; 
 }
 </style>

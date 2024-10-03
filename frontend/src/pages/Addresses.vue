@@ -2,7 +2,7 @@
    <div class="h-[calc(100vh)] overflow-hidden flex flex-col">
     <div :class="['head-layout', { collapsed: isSidebarCollapsed }]">
       <div class="head-content">
-        <header class="border-b bg-white px-5 py-6.5 sm:px-5">
+        <header class="border-b bg-white px-5 py-5.5 sm:px-5">
           <div class="float-left -mt-3">Addresses</div>
           <div class="float-right -mt-3">
             <Button
@@ -129,15 +129,14 @@ export default {
       url: 'go1_customer.go1_customer.api.api.get_address',
       method: 'get',
     })
-    console.log('address', address)
+    
     const fetchaddress = async () => {
       try {
         isLoading.value = true
         const data = await address.fetch()
         rows.value = data.map((row) => ({
           ...row,
-        }))
-        console.log('Fetched data:', rows.value)
+        }))       
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -160,8 +159,7 @@ export default {
       router.push({ name: 'addressNew' })
     }
 
-    const OpenClick = (row) => {
-      console.log('Row clicked:', row)
+    const OpenClick = (row) => {      
       if (row && row.name) {
         router.push({ name: 'addresses', params: { id: row.name } })
       } else {
@@ -186,8 +184,8 @@ export default {
 
     const filteredRows = computed(() => {
       return rows.value.filter(row => {
-        const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase())
-        const addressMatch = row.address_type.toLowerCase().includes(filterAddress.value.toLowerCase()) || !filterAddress.value; 
+        const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase())       
+        const addressMatch = row.address_type.toLowerCase()===filterAddress.value.toLowerCase() || !filterAddress.value; 
         const cityMatch = row.city.toString().includes(filterCity.value.toString()) || !filterCity.value;
         const postMatch = row.pincode.toString().includes(filterPost.value.toString()) || !filterPost.value;
        
@@ -266,23 +264,23 @@ export default {
   flex-grow: 1;
   padding: 0px;
   transition: margin-left 0.3s ease;
-  margin-left: 220px; /* Default width of sidebar */
+  margin-left: 220px; 
 }
 .collapsed .main-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px; 
 }
 .collapsed .head-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px; 
 }
 .list-row {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid #e5e7eb; /* Gray bottom border */
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .row:hover {
-  background-color: #f9fafb; /* Light gray background on hover */
+  background-color: #f9fafb;
 }
 .pagination {
   margin-top: auto; 

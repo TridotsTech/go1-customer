@@ -116,7 +116,7 @@ export default {
           total: String(row.total),
          item_name: row.items.map(item => item.item_name).join(', ') || 'No items',
         }))
-        console.log('Fetched data:', rows.value)
+      
       } catch (error) {
         console.error('Error fetching data:', error)
       }finally {
@@ -133,8 +133,7 @@ export default {
 
     const router = useRouter()
 
-    const OpenClick = (row) => {
-      console.log('Row clicked:', row)
+    const OpenClick = (row) => {     
       if (row && row.name) {
         router.push({ name: 'OrderDetails', params: { id: row.name } })
       } else {
@@ -164,7 +163,7 @@ export default {
     const filteredRows = computed(() => {
       return rows.value.filter(row => {
         const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase())
-        const statusMatch = row.status.toLowerCase().includes(filterStatus.value.toLowerCase()) || !filterStatus.value;        
+        const statusMatch = row.status.toLowerCase() === filterStatus.value.toLowerCase() || !filterStatus.value;        
         const totalMatch = row.total.toString().replace(/[.,]/g, '').includes(filterTotal.value.toString().replace(/[.,]/g, '')) || !filterTotal.value; 
         const reversedDate = filterDate.value.split('-').reverse().join('-');
         const dateMatch = row.transaction_date && row.transaction_date.includes(reversedDate); 
@@ -239,23 +238,23 @@ export default {
   flex-grow: 1;
   padding: 0px;
   transition: margin-left 0.3s ease;
-  margin-left: 220px; /* Default width of sidebar */
+  margin-left: 220px
 }
 .collapsed .main-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px;
 }
 .collapsed .head-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px; 
 }
 .list-row {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid #e5e7eb; /* Gray bottom border */
+  border-bottom: 1px solid #e5e7eb; 
 }
 
 .row:hover {
-  background-color: #f9fafb; /* Light gray background on hover */
+  background-color: #f9fafb;
 }
 .pagination {
   margin-top: auto; 

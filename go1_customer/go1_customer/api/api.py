@@ -17,7 +17,7 @@ from frappe import _
 def get_quotation():
     users_data = getcustomer()
     user_name = getcustomer()
-    filters= {}
+    filters = {'quotation_to': ['in', 'Customer']}
     if users_data:
         filters={'party_name': ['in', users_data]}
    
@@ -62,7 +62,7 @@ def get_quotation():
             quotation['city'] = address.city
             quotation['country'] = address.country
             quotation['state'] = address.state
-            quotation['phone'] = address.phone
+            quotation['phone_no'] = address.phone
             quotation['pincode'] = address.pincode
             quotation['user_name'] = user_name
 
@@ -113,7 +113,7 @@ def get_salesorder():
         sales['grand_total'] = frappe.utils.fmt_money(sales.get('grand_total'), currency=sales.get('currency'))    
         sales['total'] = frappe.utils.fmt_money(sales.get('total'), currency=sales.get('currency'))
         sales['transaction_date'] = frappe.utils.formatdate(sales.get('transaction_date'), "dd-MM-yyyy")  
-        sales['due_date'] = frappe.utils.formatdate(sales.get('due_date'), "dd-MM-yyyy")    
+        sales['delivery_date'] = frappe.utils.formatdate(sales.get('delivery_date'), "dd-MM-yyyy")    
         sales['rounded_total'] = frappe.utils.fmt_money(sales.get('rounded_total'), currency=sales.get('currency'))
         sales['total_taxes_and_charges'] = frappe.utils.fmt_money(sales.get('total_taxes_and_charges'), currency=sales.get('currency'))   
 
@@ -191,7 +191,7 @@ def get_salesinvoice():
             sales['city'] = address.city
             sales['country'] = address.country
             sales['state'] = address.state
-            sales['phone'] = address.phone
+            sales['phone_no'] = address.phone
             sales['pincode'] = address.pincode
 
     return salesinvoices_docs
@@ -259,7 +259,7 @@ def get_shipments():
             delivery['city'] = address.city
             delivery['country'] = address.country
             delivery['state'] = address.state
-            delivery['phone'] = address.phone
+            delivery['phone_no'] = address.phone
             delivery['pincode'] = address.pincode
    
    return deliverynote_docs
@@ -354,7 +354,7 @@ def get_address():
     addresses = frappe.db.get_all("Address", fields=['*'])
 
     for address in addresses:
-        links = frappe.db.get_all("Dynamic Link", fields=['*'], filters={'parent': address['name']})
+        links = frappe.db.get_all("Dynamic Link", fields=['*'], filters={'parent': address['name'], 'link_doctype':'Customer'})
         address['links'] = links
         address_list.append(address) 
 

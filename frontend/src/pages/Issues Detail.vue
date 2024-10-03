@@ -2,14 +2,14 @@
   <div>
     <div :class="['head-layout', { collapsed: isSidebarCollapsed }]">
       <div class="head-content">
-        <header class="border-b bg-white px-5 py-6.5 pb-[2.625rem] sm:px-5 mb-12">
+        <header class="border-b bg-white h-12 py-2.5 pb-[2.625rem] sm:px-5 mb-12">
           <Breadcrumbs :items="breadcrumbsList" class="float-left" />
         </header>
       </div>
     </div>
     <div :class="['layout', { collapsed: isSidebarCollapsed }]">
       <LeftSidebar :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
-      <div class="main-content p-5" style="padding-left: 150px; padding-right: 150px;">
+      <div class="main-content" style="padding-left: 150px; padding-right: 150px;">
         <div class="bg-white border rounded-lg p-6 space-y-6  pb-[2.625rem]">
           <div class="float-left mb-1 text-9xl font-bold text-gray-800 -mt-2" style="font-size: 1.85rem">
             <p>Issue</p>
@@ -21,17 +21,16 @@
             <Button v-if="!isEditing" :variant="'solid'" theme="gray" size="md" label="Edit" :disabled="false"
               @click="startEditing" class="" />
           </div>
-          <div class="border-b pb-7 pt-10"></div>
+          <div class="border-b pb-7 pt-8"></div>
           <div class="p-2">
             <FormControl :type="'text'" size="md" variant="subtle" placeholder="subject" :disabled="!isEditing"
-              label="Subject" v-model="subject" class="mb-5" />
+              label="Subject" v-model="subject" class="mb-5" />       
 
-
-            <TextEditor :fixedMenu="true" class="custom-editor " placeholder="Describe your problem..."
-              :model-value="description" @change:model-value="val => description.description = val" />
-
-
-            <div v-if="isEditing" class="float-right flex gap-4 ">
+            <div><label class="block text-base mb-2 text-gray-600" for="frappe-ui-1">Description</label>
+              <Textarea :type="'textarea'" :size="'sm'" variant="subtle" placeholder="Placeholder" :disabled="!isEditing"
+                label="Description" class=" mb-5  h-[200px]" v-model="description"  />
+            </div>
+            <div v-if="isEditing" class="float-right flex gap-4  ">
               <Button :variant="'subtle'" theme="gray" size="md" label="Discard" :disabled="false"
                 @click="cancelEditing" />
               <Button :variant="'solid'" theme="gray" size="md" label="Submit" :disabled="false"
@@ -48,17 +47,16 @@
 <script>
 import LeftSidebar from '@/components/Custom Layout/LeftSidebar.vue'
 import { ref, watch, onMounted } from 'vue'
-import { createResource, Breadcrumbs, Button, FormControl, TextEditor } from 'frappe-ui'
+import { createResource, Breadcrumbs, Button, FormControl, TextEditor, Textarea } from 'frappe-ui'
 import { useRouter, useRoute } from 'vue-router'
-// import TextEditor from '../components/TextEditor/TextEditor.vue';
-
 export default {
   components: {
     LeftSidebar,
     Breadcrumbs,
     Button,
     FormControl,
-    TextEditor
+    TextEditor,
+    Textarea
   },
   setup() {
     const router = useRouter()
@@ -80,6 +78,8 @@ export default {
       url: 'go1_customer.go1_customer.api.api.get_issues',
       method: 'get',
     })
+
+
 
     const breadcrumbsList = ref([
       { label: 'Issues', route: { name: 'issue' } },
@@ -106,8 +106,7 @@ export default {
           description.value = issueDetails.description.replace(
             /<\/?[^>]+>/gi,
             ''
-          )
-          console.log("Description after fetch:", description.value) // Check the value here
+          )          
           customer.value = issueDetails.customer
           priority.value = issueDetails.priority
         }
@@ -136,7 +135,7 @@ export default {
         description: description.value,
         customer: customer.value,
       }
-      // console.log("hello ",issueData)
+     
 
       try {
         const response = await fetch(`/api/resource/Issue/${issueId}`, {
@@ -175,7 +174,7 @@ export default {
         const prioritydata = await response.json()
         priorityOption.value =
           prioritydata.data.map((users) => users.name) || []
-        // console.log('pr', prioritydata)
+        
       } catch (error) {
         console.error('Error fetching customers:', error)
       }
@@ -272,12 +271,25 @@ export default {
 .custom-editor {
   border: 1px solid #d1d5db;
   border-radius: 13px;
-  min-height: 200px;
+  height: 200px;
+  /* Set height to 200px */
   overflow-y: auto;
-  max-width: 100%;
+  width: 100%;
   margin-bottom: 10px;
   display: block;
+  resize: both;
+  /* Allow resizing */
 }
+
+.custom-textarea {
+  height: 600px;
+  /* Set height */
+  width: 100%;
+  /* Ensure full width */
+}
+
+
+
 
 
 

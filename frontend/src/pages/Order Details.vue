@@ -13,12 +13,12 @@
 
         <div class="hai border rounded ">
           <div class=" px-5  flex border-b h-12 items-center justify-between">
-            <!-- Left: Customer Name -->
+          
             <h1 class="text-2xl font-bold text-blue-600">
               {{ customerName }}
             </h1>
 
-            <!-- Right: Badge -->
+        
             <div class="badge">
               <Badge :variant="'subtle'" :theme="getTheme(inputValue)" size="sm" label="Badge">
                 {{ inputValue }}
@@ -27,7 +27,7 @@
           </div>
 
           <div class="main flex flex-row gap-6 pt-5">
-            <!-- Left Div: Details Section -->
+           
             <div class="w-1/2 p-2 min-h-70">
               <div
                 class="text-gray-700 mb-5 ml-1 flex h-7 max-w-fit cursor-pointer items-center gap-2 pl-2 pr-3 text-base font-semibold leading-5">
@@ -59,7 +59,7 @@
               </div>
               <div class="flex items-center gap-2 px-3 leading-5 first:mt-3 text-center mt-3 pb-1">
                 <div class="sm:w-36 shrink-0 text-sm text-gray-600 text-left">
-                  Due Date:
+                  Delivery Date:
                 </div>
                 <div class="grid min-h-[18px] flex-1 items-center overflow-hidden text-base text-center">
                   {{ duedateValue }}
@@ -67,7 +67,7 @@
               </div>
             </div>
 
-            <!-- Right Div: Address & Contact Section -->
+           
             <div class="w-1/2 p-2 min-h-70">
               <div
                 class="text-gray-700 mb-5 ml-1 flex h-7 max-w-fit cursor-pointer items-center gap-4 pl-2 pr-3 text-base font-semibold leading-5">
@@ -75,19 +75,24 @@
               </div>
 
               <div class="flex flex-col gap-2">
-                <!-- Address Section -->
+               
                 <div class="flex items-start gap-2 px-3 leading-5 first:mt-1 pb-1">
                   <div class="sm:w-20 shrink-0 text-sm text-gray-600 text-left">
                     Address:
                   </div>
                   <div class="grid min-h-[18px] flex-1 items-center text-base text-left">
                     <div class="text-sm text-gray-900">
-                      {{ addressLine1 }} {{ addressLine2 }} {{ city }}, {{ state }}, {{ country }} - {{ pincode }}
+                      <span v-if="addressLine1"> {{ addressLine1 }}</span>
+                      <span v-if="addressLine2">{{ addressLine2 }}</span>
+                      <span v-if="city">{{ city }},</span>
+                      <span v-if="state">{{ state }},</span>
+                      <span v-if="country">{{ country }}</span>
+                      <span v-if="pincode">- {{ pincode }}</span> 
                     </div>
                   </div>
                 </div>
 
-                <!-- Contact Section -->
+               
                 <div class="flex items-center gap-2 px-3 leading-5 first:mt-3 text-center mt-3 pb-1">
                   <div class="sm:w-20 shrink-0 text-sm text-gray-600 text-left">
                     Contact:
@@ -158,27 +163,26 @@
 
 
           <div class="main flex flex-row">
-            <!-- Left Div: Taxes Section -->
+            
             <div class="w-3/5 flex flex-col pr-4" style="max-height: 400px; overflow-y: auto;"></div>
 
 
-            <!-- Right Div: Totals Section -->
             <div class="w-2/5 flex flex-col">
               <table class="min-w-full border-l border-gray-200">
                 <tbody class="bg-white">
-                  <!-- Total Taxes and Charges Row -->
+                  
                   <tr>
                     <td class="px-6 py-4 text-sm font-medium text-left border-b border-gray-200">Total Taxes and Charges
                     </td>
                     <td class="px-6 py-4 text-sm font-medium text-right border-b border-gray-200">{{ totalTaxValue }}
                     </td>
                   </tr>
-                  <!-- Grand Total Row -->
+               
                   <tr>
                     <td class="px-6 py-4 text-sm font-medium text-left border-b border-gray-200">Grand Total</td>
                     <td class="px-6 py-4 text-sm font-medium text-right border-b border-gray-200">{{ grandValue }}</td>
                   </tr>
-                  <!-- In Words Row -->
+                
                   <tr>
                     <td class="px-6 py-4 text-sm font-medium text-left border-b border-gray-200">In Words</td>
                     <td class="px-6 py-4 text-sm font-medium text-right border-b border-gray-200">{{ inWord }}</td>
@@ -301,7 +305,7 @@ export default {
           quotationTo.value = InvoiceDetails.quotation_to
           customerName.value = InvoiceDetails.customer
           dateValue.value = InvoiceDetails.posting_date
-          duedateValue.value = InvoiceDetails.due_date
+          duedateValue.value = InvoiceDetails.delivery_date
         }
       } catch (error) {
         console.error('Error fetching order details:', error)
@@ -385,7 +389,7 @@ export default {
   padding: 1.25rem;
   transition: margin-left 0.3s ease;
   margin-left: 220px;
-  /* Default width of sidebar */
+
 }
 
 .head-content {
@@ -393,17 +397,17 @@ export default {
   padding: 0px;
   transition: margin-left 0.3s ease;
   margin-left: 220px;
-  /* Default width of sidebar */
+
 }
 
 .collapsed .main-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+  
 }
 
 .collapsed .head-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+  
 }
 
 .status-dot {
@@ -411,6 +415,6 @@ export default {
   height: 10px;
   border-radius: 50%;
   border-width: var(--border-width, 2px);
-  /* Use dynamic border width */
+  
 }
 </style>

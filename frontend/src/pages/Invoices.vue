@@ -120,7 +120,7 @@ export default {
           total: String(row.total),
           item_name: row.items.map((item) => item.item_name).join(', ') || 'No items',
         }));
-        console.log('Fetched data:', rows.value);
+        
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -138,13 +138,10 @@ export default {
 
     const router = useRouter();
 
-    const OpenClick = (row) => {
-      console.log('Row clicked:', row);
+    const OpenClick = (row) => {      
       if (row && row.name) {
         router.push({ name: 'InvoicesDetail', params: { id: row.name } });
-      } else {
-        console.error('Row data is invalid:', row);
-      }
+      } 
     };
 
     const updatePaginatedRows = (newPaginatedRows) => {
@@ -166,7 +163,7 @@ export default {
     const filteredRows = computed(() => {
       return rows.value.filter((row) => {
         const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase());
-        const statusMatch = row.status.toLowerCase().includes(filterStatus.value.toLowerCase()) || !filterStatus.value;
+        const statusMatch = row.status.toLowerCase() === filterStatus.value.toLowerCase() || !filterStatus.value;
         const grand_totalMatch = row.grand_total.toString().replace(/[.,]/g, '').includes(filterTotal.value.toString().replace(/[.,]/g, '')) || !filterTotal.value;
         const reversedDate = filterDate.value.split('-').reverse().join('-');
         const dateMatch = row.posting_date && row.posting_date.includes(reversedDate);

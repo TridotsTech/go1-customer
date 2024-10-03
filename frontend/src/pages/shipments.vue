@@ -6,89 +6,66 @@
       </div>
     </div>
     <div :class="['layout', { collapsed: isSidebarCollapsed }]">
-      <LeftSidebar
-        class="z-[8]"
-        :isCollapsed="isSidebarCollapsed"
-        @toggle="toggleSidebar"
-      />
+      <LeftSidebar class="z-[8]" :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
       <div class="main-content">
         <div class="fiter flex gap-2 flex items-center justify-between  px-1 py-4 -mt-3">
-          <TextInput type="search" size="sm" variant="subtle" placeholder="Name" v-model="filterName" class="w-48"/>         
-          <FormControl type="select"            
-            :options="[
-                          {},
-                          { label: 'Draft', value: 'Draft' },
-                          { label: 'To Bill', value: 'To Bill' },
-                          { label: 'Return Issued', value: 'Return Issued' },
-                          { label: 'Completed', value: 'Completed' },
-                          { label: 'Cancelled', value: 'Cancelled' },
-                          { label: 'Closed', value: 'Closed' },
-                        ]"
-            size="sm" variant="subtle" placeholder="Status" v-model="filterStatus" class="w-48" />
-          <TextInput type="search" size="sm" variant="subtle" placeholder="Total" v-model="filterTotal" class="w-48" />        
-          <DatePicker class="border-none w-48"  size="md" variant="subtle" placeholder="Date" v-model="filterDate"/>
+          <TextInput type="search" size="sm" variant="subtle" placeholder="Name" v-model="filterName" class="w-48" />
+          <FormControl type="select" :options="[
+            {},
+            { label: 'Draft', value: 'Draft' },
+            { label: 'To Bill', value: 'To Bill' },
+            { label: 'Return Issued', value: 'Return Issued' },
+            { label: 'Completed', value: 'Completed' },
+            { label: 'Cancelled', value: 'Cancelled' },
+            { label: 'Closed', value: 'Closed' },
+          ]" size="sm" variant="subtle" placeholder="Status" v-model="filterStatus" class="w-48" />
+          <TextInput type="search" size="sm" variant="subtle" placeholder="Total" v-model="filterTotal" class="w-48" />
+          <DatePicker class="border-none w-48" size="md" variant="subtle" placeholder="Date" v-model="filterDate" />
           <div class="flex ml-auto">
             <Button :variant="'subtle'" theme="gray" size="sm" @click="resetFilters"> Reset</Button>
           </div>
           <RefreshButton @refresh="reload" :isLoading="isLoading" />
         </div>
 
-        <ListView
-          class="h-full"
-          :columns="columns"
-          :rows="paginatedRows"
-          :options="{
-            getRowRoute: (row) => ({
-              name: 'ShipmentDetails',
-              params: { id: row.name },
-            }),
-            selectable: true,
-            showTooltip: true,
-            resizeColumn: true,
-            emptyState: {
-              title: 'No records found',
-            },
-          }"
-          row-key="name"
-          @row-click="OpenClick"
-        >
+        <ListView class="h-full" :columns="columns" :rows="paginatedRows" :options="{
+          getRowRoute: (row) => ({
+            name: 'ShipmentDetails',
+            params: { id: row.name },
+          }),
+          selectable: true,
+          showTooltip: true,
+          resizeColumn: true,
+          emptyState: {
+            title: 'No records found',
+          },
+        }" row-key="name" @row-click="OpenClick">
           <template #cell="{ item, column }">
             <div v-if="column.key === 'status'">
               <Badge v-bind="getStatusTheme(item)" size="sm" :label="item" />
             </div>
             <div v-else-if="column.key === 'name'">
-              <span
-                class="text-black text-base"
-                style="
+              <span class="text-black text-base" style="
                   max-width: 170px;
                   overflow: hidden;
                   text-overflow: ellipsis;
                   white-space: nowrap;
                   display: block;
-                "
-              >
+                ">
                 {{ item }}
               </span>
             </div>
             <div v-else>
-              <span
-                class="font-small text-gray-700 text-base"
-                style="
+              <span class="font-small text-gray-700 text-base" style="
                   max-width: 170px;
                   overflow: hidden;
                   text-overflow: ellipsis;
                   white-space: nowrap;
                   display: block;
-                "
-                >{{ item }}</span
-              >
+                ">{{ item }}</span>
             </div>
           </template>
         </ListView>
-        <pagination
-          :rows="filteredRows"
-          @update:paginatedRows="updatePaginatedRows"
-        />
+        <pagination :rows="filteredRows" @update:paginatedRows="updatePaginatedRows" />
       </div>
     </div>
   </div>
@@ -149,8 +126,7 @@ export default {
           total: String(row.total),
           item_name:
             row.items.map((item) => item.item_name).join(', ') || 'No items',
-        }))
-        console.log('Fetched data:', rows.value)
+        }))        
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -168,8 +144,7 @@ export default {
 
     const router = useRouter()
 
-    const OpenClick = (row) => {
-      console.log('Row clicked:', row)
+    const OpenClick = (row) => {      
       if (row && row.name) {
         router.push({ name: 'ShipmentDetails', params: { id: row.name } })
       } else {
@@ -195,21 +170,11 @@ export default {
 
     const filteredRows = computed(() => {
       return rows.value.filter((row) => {
-        const nameMatch = row.name
-          .toLowerCase()
-          .includes(filterName.value.toLowerCase())
-        const statusMatch =
-          row.status.toLowerCase().includes(filterStatus.value.toLowerCase()) ||
-          !filterStatus.value
-        const grand_totalMatch =
-          row.grand_total
-            .toString()
-            .replace(/[.,]/g, '')
-            .includes(filterTotal.value.toString().replace(/[.,]/g, '')) ||
-          !filterTotal.value
+        const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase())
+        const statusMatch = row.status.toLowerCase() === filterStatus.value.toLowerCase() || !filterStatus.value;
+        const grand_totalMatch = row.grand_total.toString().replace(/[.,]/g, '').includes(filterTotal.value.toString().replace(/[.,]/g, '')) ||!filterTotal.value
         const reversedDate = filterDate.value.split('-').reverse().join('-')
-        const dateMatch =
-          row.posting_date && row.posting_date.includes(reversedDate)
+        const dateMatch = row.posting_date && row.posting_date.includes(reversedDate)
 
         return nameMatch && statusMatch && grand_totalMatch && dateMatch
       })
@@ -257,13 +222,14 @@ export default {
 </script>
 
 
-  
-  <style scoped>
+
+<style scoped>
 .head-layout {
   display: flex;
   width: 100%;
   transition: margin-left 0.3s ease;
 }
+
 .layout {
   display: flex;
   width: 100%;
@@ -279,17 +245,23 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 .head-content {
   flex-grow: 1;
   padding: 0px;
   transition: margin-left 0.3s ease;
-  margin-left: 220px; /* Default width of sidebar */
+  margin-left: 220px;
+ 
 }
+
 .collapsed .main-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px;
+ 
 }
+
 .collapsed .head-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px;
+
 }
 
 .pagination {
@@ -297,7 +269,7 @@ export default {
 }
 
 .row:hover {
-  background-color: #f9fafb; /* Light gray background on hover */
+  background-color: #f9fafb;
+ 
 }
 </style>
-  

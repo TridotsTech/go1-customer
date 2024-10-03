@@ -2,7 +2,7 @@
   <div class="h-[calc(100vh)] overflow-hidden flex flex-col">
     <div :class="['head-layout', { collapsed: isSidebarCollapsed }]">
       <div class="head-content">
-        <header class="border-b bg-white flex h-12 items-center justify-between py-2.5 pl-5">
+        <header class="border-b bg-white flex h-11 items-center justify-between py-2.5 pl-5">
           <div class="float-left ">Quotations</div>
           <div class="float-right"></div>
         </header>
@@ -115,7 +115,7 @@ export default {
             transaction_date: row.transaction_date
           }
         })
-        console.log('Fetched data:', rows.value)
+      
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -134,7 +134,7 @@ export default {
     const router = useRouter()
 
     const OpenClick = (row) => {
-      console.log('Row clicked:', row)
+      
       if (row && row.name) {
         router.push({ name: 'QuotationDetails', params: { id: row.name } })
       } else {
@@ -159,7 +159,7 @@ export default {
     const filteredRows = computed(() => {
       return rows.value.filter(row => {
         const nameMatch = row.name.toLowerCase().includes(filterName.value.toLowerCase())
-        const statusMatch = row.status.toLowerCase().includes(filterStatus.value.toLowerCase()) || !filterStatus.value;
+        const statusMatch = row.status.toLowerCase() === filterStatus.value.toLowerCase() || !filterStatus.value;
         const grand_totalMatch = row.grand_total.toString().replace(/[.,]/g, '').includes(filterTotal.value.toString().replace(/[.,]/g, '')) || !filterTotal.value;
         const reversedDate = filterDate.value.split('-').reverse().join('-');
         const dateMatch = row.transaction_date && row.transaction_date.includes(reversedDate);
@@ -244,17 +244,17 @@ body,
   padding: 0px;
   transition: margin-left 0.3s ease;
   margin-left: 220px;
-  /* Default width of sidebar */
+ 
 }
 
 .collapsed .main-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+ 
 }
 
 .collapsed .head-content {
   margin-left: 60px;
-  /* Adjust when sidebar is collapsed */
+
 }
 
 .list-row {
@@ -262,7 +262,7 @@ body,
   justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #e5e7eb;
-  /* Gray bottom border */
+ 
 }
 
 .pagination {
@@ -271,31 +271,31 @@ body,
 
 .bg-green-100 {
   background-color: #d1fae5;
-  /* Light green */
+
 }
 
 .bg-gray-100 {
   background-color: #f3f4f6;
-  /* Light gray */
+ 
 }
 
 .bg-red-100 {
   background-color: #fee2e2;
-  /* Light red */
+  
 }
 
 .bg-orange-100 {
   background-color: #ffedd5;
-  /* Light orange */
+ 
 }
 
 .bg-yellow-100 {
   background-color: #fef3c7;
-  /* Light yellow */
+  
 }
 
 .bg-gray-200 {
   background-color: #e5e7eb;
-  /* Gray */
+  
 }
 </style>

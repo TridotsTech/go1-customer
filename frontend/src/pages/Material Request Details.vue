@@ -47,20 +47,7 @@
             
             </div>
           </Badge>
-        </div>
-
-          <!-- <div :class="['flex items-center ', statusBorColor]" class="pl-5">
-            <div
-              :style="{
-                backgroundColor: statusColor,
-                bdeliveryColor: bdeliveryColor,
-                bdeliveryWidth: bdeliveryWidth,
-                bdeliveryStyle: 'solid',
-              }"
-              class="status-dot"
-            ></div>
-            <span :class="statusColorText">{{ inputValue }}</span>
-          </div> -->
+        </div>         
           <div class="flex justify-end space-x-4 pt-4"></div>
         </div>
         <div class="">
@@ -346,9 +333,7 @@ export default {
         default:
           return 'bdelivery-gray-300'
       }
-    })
-
-    // Dynamically set bdelivery width for the status dot
+    })  
     const bdeliveryWidth = computed(() => 'auto')
 
     return {
@@ -401,27 +386,22 @@ export default {
   flex-grow: 1;
   padding: 1.25rem;
   transition: margin-left 0.3s ease;
-  margin-left: 220px; /* Default width of sidebar */
+  margin-left: 220px;
 }
 .head-content {
   flex-grow: 1;
   padding: 0px;
   transition: margin-left 0.3s ease;
-  margin-left: 220px; /* Default width of sidebar */
+  margin-left: 220px; 
 }
 .collapsed .main-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px;
 }
 .collapsed .head-content {
-  margin-left: 60px; /* Adjust when sidebar is collapsed */
+  margin-left: 60px; 
 }
 .status-dot {
   width: 10px;
-  height: 10px;
-  bdelivery-radius: 50%;
-  bdelivery-width: var(
-    --bdelivery-width,
-    2px
-  ); /* Use dynamic bdelivery width */
+  height: 10px; 
 }
 </style>
