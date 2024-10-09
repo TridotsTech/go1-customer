@@ -244,3 +244,6 @@ app_license = "mit"
 
 
 website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'}, {'from_route': '/dashboard/<path:app_path>', 'to_route': 'dashboard'},]
+fixtures = [
+    {"doctype": "Go1 Navbar Settings"}
+]

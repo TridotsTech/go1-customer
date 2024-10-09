@@ -10,7 +10,7 @@
     <div :class="['layout', { collapsed: isSidebarCollapsed }]">
       <LeftSidebar :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
       <div class="main-content">
-        <div class="bg-white shadow-md rounded-lg p-6 space-y-6 pb-[2.625rem] ml-[126px] mr-[120px]">
+        <div class="bg-white border rounded-lg p-6 space-y-6 pb-[2.625rem] ml-[126px] mr-[120px]">
           <div class="float-left mb-1 text-9xl font-bold text-gray-800 -mt-2" style="font-size: 1.85rem">
             <p>Address</p>
             <p class="text-9xl font-bold text-gray-600" style="font-size: 1rem">

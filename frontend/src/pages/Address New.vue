@@ -2,7 +2,7 @@
   <div>
     <div :class="['head-layout', { collapsed: isSidebarCollapsed }]">
       <div class="head-content">
-        <header class="border-b bg-white px-5 py-6.5 pb-[2.625rem] sm:px-5 mb-12">
+        <header class="border-b bg-white px-5 py-5.5 pb-[2.625rem] sm:px-5 mb-12">
           <Breadcrumbs :items="breadcrumbsList" class="float-left" />
         </header>
       </div>
@@ -10,7 +10,7 @@
     <div :class="['layout', { collapsed: isSidebarCollapsed }]">
       <LeftSidebar :isCollapsed="isSidebarCollapsed" @toggle="toggleSidebar" />
       <div class="main-content">
-        <div class="bg-white shadow-md rounded-lg p-6 space-y-6 pb-[2.625rem]  ml-[126px] mr-[120px]">
+        <div class="bg-white border rounded-lg p-6 space-y-6 pb-[2.625rem]  ml-[126px] mr-[120px]">
           <div class="flex justify-between">
             <div>
               <p class="text-2xl font-bold text-gray-800">Address</p>
@@ -26,16 +26,17 @@
                 :type="'text'"
                 size="md"
                 variant="subtle"
-                label="Address Title"
+                label="Address Title *"
                 v-model="address_title"
                 class="mb-5"
+                required
               />
               <FormControl
                 :type="'select'"
                 size="md"
                 :options="address_typeOptions"
                 variant="subtle"
-                label="Address Type"
+                label="Address Type *"
                 v-model="address_type"
                 class="mb-5"
               />
@@ -43,9 +44,10 @@
                 :type="'text'"
                 size="md"
                 variant="subtle"
-                label="Address Line 1"
+                label="Address Line 1 *"
                 v-model="address_line1"
                 class="mb-5"
+                required
               />
               <FormControl
                 :type="'text'"
@@ -59,7 +61,7 @@
                 :type="'text'"
                 size="md"
                 variant="subtle"
-                label="City"
+                label="City *"
                 v-model="city"
                 class="mb-5"
               />
@@ -78,7 +80,7 @@
                 :type="'text'"
                 size="md"
                 variant="subtle"
-                label="Country"
+                label="Country *"
                 v-model="country"
                 class="mb-5"
               />
@@ -110,14 +112,15 @@
                 :type="'text'"
                 size="md"
                 variant="subtle"
-                label="GSTIN"
+                placeholder="eg-33AAKFT6215C1ZH"
+                label="GSTIN *"
                 v-model="gstin"
                 class="mb-5"
               />
             </div>
           </div>
           <div class="border-b pb-7 pt-5"></div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div v-if="linkName" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <FormControl
                 :type="'text'"
@@ -137,12 +140,13 @@
                 :disabled="true"
                 variant="subtle"
                 label="Link Name"
-                v-model="rows"
+                v-model="linkName"
                 class="mb-5"
               />
             </div>
           </div>
           <div class="flex justify-end gap-4 mt-4">
+         
             <Button
               :variant="'subtle'"
               theme="gray"
@@ -191,9 +195,9 @@ export default {
     const pincode = ref('');
     const country = ref('');
     const email_id = ref('');
+    const linkName = ref('');
     const rows = ref('');
-    const customOption = ref([]);
-    const docOption = ref()
+    const customOption = ref([]);    
     const phone = ref('');
     const gstin = ref('');
     const customer_name=ref('');
@@ -236,45 +240,52 @@ export default {
     };
 
     const createIssue = async () => {
-      const addressData = {
-        address_title: address_title.value,
-        address_type: address_type.value,
-        city: city.value,
-        address_line1: address_line1.value,
-        address_line2: address_line2.value,
-        state: state.value,
-        pincode: pincode.value,
-        country: country.value,
-        email_id: email_id.value,
-        phone: phone.value,
-        gstin: gstin.value,
-        links: [
-          {
-            link_doctype: links_doctype.value,
-            link_name: link_name.value,
-          },
-        ],
-      };
-      try {
-        const response = await fetch('/api/resource/Address', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify(addressData),
-        });
+  if (!gstin.value || !address_title.value || !address_type.value || !city.value || !country.value || !address_line1.value) {
+    alert('Please fill in all required fields');
+    return;
+  }
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Error creating address: ${errorText}`);
-        }
+  const addressData = {
+    address_title: address_title.value,
+    address_type: address_type.value,
+    city: city.value,
+    address_line1: address_line1.value,
+    address_line2: address_line2.value,
+    state: state.value,
+    pincode: pincode.value,
+    country: country.value,
+    email_id: email_id.value,
+    phone: phone.value,
+    gstin: gstin.value,    
+  };
+  if (linkName.value) {
+    addressData.links = [
+      {
+        link_doctype: 'Customer',
+        link_name: linkName.value,
+      },
+    ];
+  }
+  try {
+    const response = await fetch('/api/resource/Address', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(addressData),
+    });
 
-        router.push({ name: 'addresses' });
-      } catch (error) {
-        console.error('Error creating address:', error);
-      }
-    };
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error creating address: ${errorText}`);
+    }
+
+    router.push({ name: 'addresses' });
+  } catch (error) {
+    console.error('Error creating address:', error);
+  }
+};
     const toggleSidebar = () => {
       isSidebarCollapsed.value = !isSidebarCollapsed.value;
     };
@@ -283,16 +294,18 @@ export default {
     const customerData = ref([]);
 
 const address_list = createResource({
-  url: 'go1_customer.go1_customer.api.api.getcustomer',
-  cache: ['data'],
+  url: 'go1_customer.go1_customer.api.api.getcustomer',  
   auto: true,
 });
+
 const fetchorder = async () => {
       try {
         isLoading.value = true
         const data = await address_list.fetch()
         rows.value = data
         console.log('Fetched data:', rows.value)
+        linkName.value = rows.value[0];
+        console.log('Link Name:', linkName.value)
       } catch (error) {
         console.error('Error fetching data:', error)
       }finally {
@@ -321,6 +334,9 @@ const fetchorder = async () => {
       address_line1,
       customOption,
       city,
+      email_id,
+      phone,
+      linkName,
       rows,
       gstin,
       address_line2,

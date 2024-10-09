@@ -94,6 +94,11 @@ const routes = [
       path: '/Dashboard',
       name:'dashboard',
       component:() => import ('@/pages/Dashboards.vue')
+    },
+    {
+      path: '/Mainpage',
+      name:'mainpage',
+      component:() => import ('@/pages/mainpage.vue')
     }
     
 

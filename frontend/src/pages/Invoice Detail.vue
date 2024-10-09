@@ -178,7 +178,7 @@
                     <td class="px-6 py-4 text-sm font-medium text-right border-b border-gray-200">{{ totalTaxValue }}
                     </td>
                   </tr>
-                 >
+                 
                   <tr>
                     <td class="px-6 py-4 text-sm font-medium text-left border-b border-gray-200">Grand Total</td>
                     <td class="px-6 py-4 text-sm font-medium text-right border-b border-gray-200">{{ grandValue }}</td>
