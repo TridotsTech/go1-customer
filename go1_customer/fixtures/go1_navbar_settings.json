@@ -1,0 +1,101 @@
+[
+ {
+  "application_logo": "",
+  "docstatus": 0,
+  "doctype": "Go1 Navbar Settings",
+  "help_dropdown": [],
+  "logo_width": 22,
+  "modified": "2024-10-03 12:00:32.172919",
+  "name": "Go1 Navbar Settings",
+  "settings_dropdown": [
+   {
+    "enabled": 1,
+    "icon": "book",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Quotation",
+    "role": "Customer",
+    "route": "/Quotations",
+    "title": "Quotation"
+   },
+   {
+    "enabled": 1,
+    "icon": "file",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Sales Invoice",
+    "role": null,
+    "route": "/Invoices",
+    "title": "Invoice"
+   },
+   {
+    "enabled": 1,
+    "icon": "shopping-cart",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Sales Order",
+    "role": null,
+    "route": "/Orders",
+    "title": "Orders"
+   },
+   {
+    "enabled": 1,
+    "icon": "package",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Delivery Note",
+    "role": null,
+    "route": "/Shipments",
+    "title": "Shipments"
+   },
+   {
+    "enabled": 1,
+    "icon": "help-circle",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Issue",
+    "role": null,
+    "route": "/Issues",
+    "title": "Tickets"
+   },
+   {
+    "enabled": 1,
+    "icon": "home",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Address",
+    "role": null,
+    "route": "/Addresses",
+    "title": "Addresses"
+   },
+   {
+    "enabled": 0,
+    "icon": "file-text",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Material Request",
+    "role": null,
+    "route": "/Material_Request",
+    "title": "Material Request"
+   },
+   {
+    "enabled": 1,
+    "icon": "layout",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Dashboard",
+    "role": null,
+    "route": "/Dashboard",
+    "title": "Dashboard"
+   }
+  ]
+ }
+]
