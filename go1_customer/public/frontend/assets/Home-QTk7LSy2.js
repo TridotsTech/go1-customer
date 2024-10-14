@@ -1,1 +1,0 @@
-import{c as e,r as a,e as r,g as t,i as o}from"./index-CMQgrs3Q.js";import{L as s}from"./LeftSidebar-DIvzo2_q.js";const c={class:"max-w-3xl py-12 mx-auto"},i={__name:"Home",setup(m){return e({url:"ping",auto:!0}),a(!1),(_,n)=>(o(),r("div",c,[t(s)]))}};export{i as default};

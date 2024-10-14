@@ -100,7 +100,7 @@ const routes = [
 ]
 
 let router = createRouter({
-  history: createWebHistory('/go1-customer'),
+  history: createWebHistory('/go1_customer'),
   routes,
 })
 

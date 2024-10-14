@@ -9,7 +9,7 @@
       <Button :variant="'ghost'" :class="{ 'active': isActive }" class="h-13" @click="isActive = !isActive">
         <template v-if="isCollapsed">
 
-          <Avatar class="flex-shrink-0 rounded ml-[-2px]" :shape="'square'" image="/G0-1-Customer portal.png" label="EY"
+          <Avatar class="flex-shrink-0 rounded ml-[-2px]" :shape="'square'" image="/assets/go1_customer/images/go1.svg" label="EY"
             size="xl" />
 
         </template>
@@ -18,7 +18,7 @@
             <div class="flex-shrink-0 text-sm duration-300 ease-in-out mr-1 ml-0 w-auto opacity-100"
               style="float:left;">
 
-              <Avatar class="size-8 flex-shrink-0 rounded" image="/G0-1-Customer portal.png" :shape="'square'"
+              <Avatar class="size-8 flex-shrink-0 rounded" image="/assets/go1_customer/images/go1.svg" :shape="'square'"
                 label="EY" size="xl" style="margin-left:-61px" />
 
             </div>

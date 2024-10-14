@@ -11,15 +11,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "go1_customer",
-# 		"logo": "/assets/go1_customer/logo.png",
-# 		"title": "Go1 Customer",
-# 		"route": "/go1_customer",
-# 		"has_permission": "go1_customer.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "go1_customer",
+		"logo": "/assets/go1_customer/images/go1.svg",
+		"title": "Go1 Customer",
+		"route": "/go1_customer",
+		# "has_permission": "go1_customer.api.permission.has_app_permission"
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -243,7 +243,7 @@ app_license = "mit"
 # }
 
 
-website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'}, {'from_route': '/dashboard/<path:app_path>', 'to_route': 'dashboard'},]
+website_route_rules = [{'from_route': '/go1_customer/<path:app_path>', 'to_route': 'go1_customer'}, {'from_route': '/dashboard/<path:app_path>', 'to_route': 'dashboard'},]
 fixtures = [
     {"doctype": "Go1 Navbar Settings"}
 ]
