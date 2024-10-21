@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-24 12:31:15.958021",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "application_logo_section",
+  "application_logo",
+  "column_break_xxgc",
+  "logo_width",
+  "dropdowns_section",
+  "settings_dropdown",
+  "help_dropdown"
+ ],
+ "fields": [
+  {
+   "fieldname": "application_logo_section",
+   "fieldtype": "Section Break",
+   "label": "Application Logo"
+  },
+  {
+   "fieldname": "application_logo",
+   "fieldtype": "Attach",
+   "label": "Application Logo"
+  },
+  {
+   "fieldname": "column_break_xxgc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "logo_width",
+   "fieldtype": "Int",
+   "label": "Logo Width"
+  },
+  {
+   "fieldname": "dropdowns_section",
+   "fieldtype": "Section Break",
+   "label": "Dropdowns"
+  },
+  {
+   "fieldname": "settings_dropdown",
+   "fieldtype": "Table",
+   "label": "Settings Dropdown",
+   "options": "Go1 Navbar Item"
+  },
+  {
+   "fieldname": "help_dropdown",
+   "fieldtype": "Table",
+   "label": "Help Dropdown",
+   "options": "Navbar Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-09-24 12:31:15.958021",
+ "modified_by": "Administrator",
+ "module": "Go1 Customer",
+ "name": "Go1 Navbar Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "go1_customer",
+  "version": "1.0.0",
+  "description": "Customer Details",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd frontend && yarn install",
+    "dev": "cd frontend && yarn dev",
+    "build": "cd frontend && yarn build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
