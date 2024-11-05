@@ -4,8 +4,14 @@
             <AppSidebar />
         </div>
         <div class="flex-1 flex flex-col h-full ">
-            <AppHeader />
-            <div class="flex-1 px-28 py-10 overflow-auto">
+           <AppHeader/>   
+           
+            <!-- Loading Spinner -->
+            <div v-if="isLoading" class="flex justify-center items-center flex-1">
+                   <Spinner class="w-8" />
+               </div>
+
+            <div  v-else class="detail flex-1 px-28 py-10 overflow-auto">
                 <div class="hai border rounded">
                     <div class="px-5 flex border-b h-12 items-center justify-between">
                         <h1 class="text-2xl font-bold text-blue-600">{{ customerName }}</h1>
@@ -16,7 +22,7 @@
                         </div>
                     </div>
 
-                    <div class="main flex flex-row gap-6 pt-5">
+                    <div class="main flex flex-row gap-6 pt-2">
                         <div class="w-1/2 p-2 min-h-70">
                             <div class="text-gray-700 mb-5 ml-1 flex h-7 max-w-fit cursor-pointer items-center gap-2 pl-2 pr-3 text-base font-semibold leading-5">
                                 Details
@@ -69,7 +75,7 @@
                         <table class="min-w-full border-b">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                    <th class="px-6 w-96 overflow-hidden py-3 text-left text-xs  font-medium text-gray-500 uppercase tracking-wider">Item</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rate(INR)</th>
                                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount(INR)</th>
@@ -90,7 +96,7 @@
                         </table>
                     </div>
 
-                    <div class="main flex flex-row">
+                    <div class="main flex mb-10 flex-row">
                         <div class="w-3/5 flex flex-col pr-4" style="max-height: 400px; overflow-y: auto;"></div>
 
                         <div class="w-2/5 flex flex-col">
@@ -113,7 +119,7 @@
                         </div>
                     </div>
 
-                    <div class="items">
+                    <div v-if="taxValue && taxValue.length" class="taxes">
                         <div class="flex flex-col" style="max-height: 400px; overflow-y: auto;">
                             <div class="text-gray-700 p-5 flex h-7 max-w-fit cursor-pointer items-center gap-2 pr-3 text-base font-semibold leading-5">
                                 Taxes
@@ -147,7 +153,7 @@
 <script setup>
 import AppSidebar from '@/components/Layouts/AppSidebar.vue'
 import AppHeader from '@/components/Layouts/AppHeader.vue'
-import { createResource, Badge } from 'frappe-ui'
+import { createResource, Badge, Spinner } from 'frappe-ui'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -168,6 +174,7 @@ const totalTaxValue = ref('')
 const grandValue = ref('')
 const inWord = ref('')
 const taxValue = ref([])
+const isLoading = ref(false);
 
 const getTheme = (inputValue) => {
     if (inputValue === 'Cancelled') {
@@ -187,6 +194,7 @@ const route = useRoute()
 
 const fetchQuotation = async () => {
     try {
+        isLoading.value = true;
         const id = route.params.id
 
         const response = await createResource({
@@ -208,7 +216,7 @@ const fetchQuotation = async () => {
             state.value = details.state
             country.value = details.country
             pincode.value = details.pincode
-            phone.value = details.phone_no
+            phone.value = details.phone
             itemValue.value = details.items
             totalValue.value = details.total
             totalTaxValue.value = details.total_taxes_and_charges
@@ -220,7 +228,9 @@ const fetchQuotation = async () => {
         }
     } catch (error) {
         console.error('Error fetching the details:', error)
-    }
+    }finally {
+       isLoading.value = false;
+   }
 }
 
 fetchQuotation()

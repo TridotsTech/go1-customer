@@ -17,9 +17,20 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
+  Filler 
 } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Filler 
+);
 
 export default {
   components: {
@@ -95,19 +106,15 @@ export default {
             '04', '05', '06', '07', '08', '09', '10', '11', '12', '01', '02', '03'
           ];
 
-          const labels = financialYearOrder.map((monthKey, index) => {
+          const labels = financialYearOrder.map((monthKey) => {
             const year = monthKey >= '04' ? startYear : startYear + 1;
             return `${monthMapping[monthKey]} ${year}`;
           });
-
-          console.log('Labels:', labels);
 
           const sortedData = financialYearOrder.map((monthKey) => {
             const matchingItem = data.message.find(item => item.month.slice(-2) === monthKey);
             return matchingItem ? matchingItem.total_spending : 0;
           });
-
-          console.log('Sorted Data:', sortedData);
 
           chartData.value = {
             labels: labels,
@@ -125,7 +132,7 @@ export default {
           };
         } 
       } catch (error) {
-        
+       
       }
     };
 

@@ -1,9 +1,5 @@
 <template>
   <div>
-    <router-view />
-    <Toasts/>
+    <router-view />    
   </div>
 </template>
-<script>
-import { Toasts } from 'frappe-ui'
-</script>

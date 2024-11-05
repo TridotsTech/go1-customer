@@ -6,27 +6,31 @@
         <div class="flex-1 flex flex-col h-full overflow-auto">
             <AppHeader />
             <div class="dashboard flex-1 overflow-auto px-28 py-10">
-                <div class="bg-white border rounded-lg p-6 space-y-6 pb-[2.625rem]">
-                    <div class="float-left mb-1 text-9xl font-bold text-gray-800 -mt-2" style="font-size: 1.85rem">
-                        <p>Issue</p>
-                        <p class="text-9xl font-bold text-gray-600" style="font-size: 1rem">{{ subject }}</p>
+                <div class="bg-white border rounded-lg">
+                    <div class="flex border-b h-12 justify-between items-center p-6">
+                        <div>
+                            <p class="text-9xl font-bold text-gray-800" >Issue</p>                                                     
+                        </div>
+                        <Button v-if="!isEditing" variant="solid" theme="gray" size="sm" label="Edit" :disabled="false" 
+                            @click="startEditing" 
+                        />
                     </div>
-                    <div class="float-right mb-1">
-                        <Button v-if="!isEditing" variant="solid" theme="gray" size="md" label="Edit" :disabled="false" @click="startEditing" />
-                    </div>
-                    <div class="border-b pb-7 pt-8"></div>
-                    <div class="p-2">
+                    <div class="p-6">
                         <FormControl type="text" size="md" variant="subtle" placeholder="subject" :disabled="!isEditing" label="Subject" v-model="subject" class="mb-5" />
                         <div>
-                            <label class="block text-base mb-2 text-gray-600" for="frappe-ui-1">Description</label>
-                            <Textarea type="textarea" size="sm" variant="subtle" placeholder="Placeholder" :disabled="!isEditing" label="Description" class="mb-5 h-[200px]" v-model="description" />
-                        </div>
-                        <div v-if="isEditing" class="float-right flex gap-4">
-                            <Button variant="subtle" theme="gray" size="md" label="Discard" :disabled="false" @click="cancelEditing" />
-                            <Button variant="solid" theme="gray" size="md" label="Submit" :disabled="false" @click="submitChanges" />
+                            <label class="block text-base text-gray-600" for="frappe-ui-1">Description</label>
+                            <Textarea type="textarea" size="sm" variant="subtle" placeholder="Placeholder" :disabled="!isEditing" label="Description" class="h-[200px]" v-model="description" />
                         </div>
                     </div>
-                </div>
+                    <div>
+                        <div v-if="isEditing"  class="flex justify-end gap-4 p-6">
+                            <Button variant="subtle" theme="gray" size="sm" label="Discard" :disabled="false"
+                                @click="cancelEditing" />
+                            <Button variant="solid" theme="gray" size="sm" label="Submit" :disabled="false"
+                                @click="submitChanges" />
+                        </div>
+                    </div>
+                </div>                
             </div>
         </div>
     </div>
@@ -35,8 +39,8 @@
 <script setup>
 import AppSidebar from '@/components/Layouts/AppSidebar.vue'
 import AppHeader from '@/components/Layouts/AppHeader.vue'
-import { ref, watch, onMounted } from 'vue'
-import { createResource, Button, FormControl, Textarea } from 'frappe-ui'
+import { ref, onMounted } from 'vue'
+import { createResource,  FormControl, Textarea } from 'frappe-ui'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -57,11 +61,6 @@ const issues = createResource({
     url: 'go1_customer.go1_customer.api.api.get_issues',
     method: 'get',
 })
-
-const breadcrumbsList = ref([
-    { label: 'Issues', route: { name: 'issue' } },
-    { label: 'New', route: {} },
-])
 
 
 const fetchIssueDetails = async () => {

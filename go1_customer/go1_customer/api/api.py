@@ -4,203 +4,141 @@ from frappe import _
 
 @frappe.whitelist()
 def get_quotation():
-    users_data = getcustomer()
-    user_name = getcustomer()
-    filters = {'quotation_to': ['in', 'Customer']}
-    
-    if users_data:
-        filters = {'party_name': ['in', users_data]}
-
-    quotations = frappe.db.get_all("Quotation", fields=['*'], filters=filters)
-    quotation_docs = []
-
-    # Get the meta data of the Quotation Doctype
     quotation_meta = frappe.get_meta("Quotation")
+    users_data = getcustomer()
+    
+    filters = {"quotation_to": "Customer"}
+    if users_data:
+        filters["party_name"] = ["in", users_data]
+
+    quotations = frappe.get_all("Quotation", fields=["*"], filters=filters)
 
     for quotation in quotations:
-        items = frappe.db.get_all("Quotation Item", fields=["*"], filters={"parent": quotation["name"]})
-        taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": quotation["name"]})
-
-        quotation["items"] = items
-        quotation["taxes"] = taxes
-
-        quotation['grand_total'] = frappe.utils.fmt_money(quotation.get('grand_total'), currency=quotation.get('currency'))
-        quotation['total'] = frappe.utils.fmt_money(quotation.get('total'), currency=quotation.get('currency'))
-        quotation['rounded_total'] = frappe.utils.fmt_money(quotation.get('rounded_total'), currency=quotation.get('currency'))
-        quotation['total_taxes_and_charges'] = frappe.utils.fmt_money(quotation.get('total_taxes_and_charges'), currency=quotation.get('currency'))
-
-        quotation['transaction_date'] = frappe.utils.formatdate(quotation.get('transaction_date'), "dd-MM-yyyy")
-        quotation['valid_till'] = frappe.utils.formatdate(quotation.get('valid_till'), "dd-MM-yyyy")
-
-        for item in quotation['items']:
-            item['rate'] = frappe.utils.fmt_money(item['rate'], currency=quotation.get('currency'))
-            item['amount'] = frappe.utils.fmt_money(item['amount'], currency=quotation.get('currency'))
-
-        for tax in quotation['taxes']:
-            tax['rate'] = frappe.utils.fmt_money(tax.get('rate', 0), currency=quotation.get('currency'))
-            tax['tax_amount'] = frappe.utils.fmt_money(tax.get('tax_amount', 0), currency=quotation.get('currency'))
-            tax['total'] = frappe.utils.fmt_money(tax.get('total', 0), currency=quotation.get('currency'))
-
-        if quotation.get('customer_address'):
-            address = frappe.get_doc('Address', quotation['customer_address'])
-            quotation['address_line1'] = address.address_line1
-            quotation['address_line2'] = address.address_line2
-            quotation['city'] = address.city
-            quotation['country'] = address.country
-            quotation['state'] = address.state
-            quotation['phone_no'] = address.phone
-            quotation['pincode'] = address.pincode
-            quotation['user_name'] = user_name
-
-        if quotation.get('shipping_address_name'):
-            address = frappe.get_doc('Address', quotation['shipping_address_name'])
-            quotation['ship_address_line1'] = address.address_line1
-            quotation['ship_address_line2'] = address.address_line2
-            quotation['ship_city'] = address.city
-            quotation['ship_country'] = address.country
-            quotation['ship_state'] = address.state
-            quotation['ship_phone'] = address.phone
-            quotation['ship_pincode'] = address.pincode
-            quotation['ship_user_name'] = user_name      
+        quotation["items"] = frappe.get_all("Quotation Item", fields=["*"], filters={"parent": quotation["name"]})
+        quotation["taxes"] = frappe.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": quotation["name"]})
         
+        currency = quotation.get("currency")
 
-        quotation_docs.append(quotation)
+        for field in quotation_meta.fields:
+            if field.fieldtype == "Currency" and quotation.get(field.fieldname):
+                quotation[field.fieldname] = frappe.utils.fmt_money(quotation[field.fieldname], currency=currency)
+            # if field.fieldtype == "Date" and quotation.get(field.fieldname):
+            #     quotation[field.fieldname] = frappe.utils.formatdate(quotation[field.fieldname], "dd-MM-yyyy")
+        
+        for item in quotation["items"]:
+            item_meta = frappe.get_meta("Quotation Item")
+            for field in item_meta.fields:
+                if field.fieldtype == "Currency" and item.get(field.fieldname):
+                    item[field.fieldname] = frappe.utils.fmt_money(item[field.fieldname], currency=currency)
+
+        for tax in quotation["taxes"]:
+            tax_meta = frappe.get_meta("Sales Taxes and Charges")
+            for field in tax_meta.fields:
+                if field.fieldtype == "Currency" and tax.get(field.fieldname):
+                    tax[field.fieldname] = frappe.utils.fmt_money(tax[field.fieldname], currency=currency)
+
+        if quotation.get("customer_address"):
+            address = frappe.get_doc("Address", quotation["customer_address"])
+            for field in ["address_line1", "address_line2", "city", "state", "country", "phone", "pincode"]:
+                quotation[field] = getattr(address, field, None)
+
+        if quotation.get("shipping_address_name"):
+            ship_address = frappe.get_doc("Address", quotation["shipping_address_name"])
+            for field in ["address_line1", "address_line2", "city", "state", "country", "phone", "pincode"]:
+                quotation[f"ship_{field}"] = getattr(ship_address, field, None)
 
     return {
-        "data": quotation_docs,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in quotation_meta.fields
-            ]
-        }
+        "meta": quotation_meta.as_dict(),
+        "data": quotations
     }
-
-
 
 
 @frappe.whitelist()
 def get_salesorder():
+    salesorder_meta = frappe.get_meta("Sales Order")
     users_data = getcustomer()
+    
     filters = {}
-
     if users_data:
         filters = {'customer': ['in', users_data]}
 
-    salesorders = frappe.db.get_all("Sales Order", fields=['*'], filters=filters)
-    salesorder_items = frappe.db.get_all("Sales Order Item", fields=["*"])
-    salesorder_taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"])
-
-    salesorder_docs = []
-    salesorder_meta = frappe.get_meta("Sales Order")
+    salesorders = frappe.get_all("Sales Order", fields=['*'], filters=filters)
 
     for salesorder in salesorders:
-        items = [item for item in salesorder_items if item["parent"] == salesorder["name"]]
-        taxes = [tax_item for tax_item in salesorder_taxes if tax_item["parent"] == salesorder["name"]]
+        currency = salesorder.get("currency")
 
-        salesorder["items"] = items
-        salesorder["taxes"] = taxes
-        salesorder_docs.append(salesorder)
+        for field in salesorder_meta.fields:
+            if field.fieldtype == "Currency" and salesorder.get(field.fieldname):
+                salesorder[field.fieldname] = frappe.utils.fmt_money(salesorder[field.fieldname], currency=currency)
+            # if field.fieldtype == "Date" and salesorder.get(field.fieldname):
+            #     salesorder[field.fieldname] = frappe.utils.formatdate(salesorder[field.fieldname], "dd-MM-yyyy")
 
-    for sales in salesorder_docs:
-        sales['grand_total'] = frappe.utils.fmt_money(sales.get('grand_total'), currency=sales.get('currency'))
-        sales['total'] = frappe.utils.fmt_money(sales.get('total'), currency=sales.get('currency'))
-        sales['transaction_date'] = frappe.utils.formatdate(sales.get('transaction_date'), "dd-MM-yyyy")
-        sales['delivery_date'] = frappe.utils.formatdate(sales.get('delivery_date'), "dd-MM-yyyy")
-        sales['rounded_total'] = frappe.utils.fmt_money(sales.get('rounded_total'), currency=sales.get('currency'))
-        sales['total_taxes_and_charges'] = frappe.utils.fmt_money(sales.get('total_taxes_and_charges'), currency=sales.get('currency'))
+        salesorder["items"] = frappe.get_all("Sales Order Item", fields=["*"], filters={"parent": salesorder["name"]})
+        salesorder["taxes"] = frappe.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": salesorder["name"]})
 
-        for item in sales['items']:
-            item['rate'] = frappe.utils.fmt_money(item['rate'], currency=sales.get('currency'))
-            item['amount'] = frappe.utils.fmt_money(item['amount'], currency=sales.get('currency'))
+        for item in salesorder["items"]:
+            for field in frappe.get_meta("Sales Order Item").fields:
+                if field.fieldtype == "Currency" and item.get(field.fieldname):
+                    item[field.fieldname] = frappe.utils.fmt_money(item[field.fieldname], currency=currency)
 
-        for tax in sales['taxes']:
-            tax['rate'] = frappe.utils.fmt_money(tax.get('rate', 0), currency=sales.get('currency'))
-            tax['tax_amount'] = frappe.utils.fmt_money(tax.get('tax_amount', 0), currency=sales.get('currency'))
-            tax['total'] = frappe.utils.fmt_money(tax.get('total', 0), currency=sales.get('currency'))
+        for tax in salesorder["taxes"]:
+            for field in frappe.get_meta("Sales Taxes and Charges").fields:
+                if field.fieldtype == "Currency" and tax.get(field.fieldname):
+                    tax[field.fieldname] = frappe.utils.fmt_money(tax[field.fieldname], currency=currency)
 
-        if sales.get('customer_address'):
-            address = frappe.get_doc('Address', sales['customer_address'])
-            sales['address_line1'] = address.address_line1
-            sales['address_line2'] = address.address_line2
-            sales['city'] = address.city
-            sales['country'] = address.country
-            sales['state'] = address.state
-            sales['phone'] = address.phone
-            sales['pincode'] = address.pincode
+        if salesorder.get('customer_address'):
+            address = frappe.get_doc('Address', salesorder['customer_address'])
+            for field in ["address_line1", "address_line2", "city", "state", "country", "phone", "pincode"]:
+                salesorder[field] = getattr(address, field, None)
 
     return {
-        "data": salesorder_docs,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in salesorder_meta.fields
-            ]
-        }
+        "meta": salesorder_meta.as_dict(),
+        "data": salesorders
     }
-
 
 
 @frappe.whitelist()
 def get_salesinvoice():
+    salesinvoice_meta = frappe.get_meta("Sales Invoice")
     user_data = getcustomer()
-    filters = {}
     
+    filters = {}
     if user_data:
         filters = {'customer': ['in', user_data]}
 
-    salesinvoices = frappe.db.get_all("Sales Invoice", fields=['*'], filters=filters)
-    salesinvoice_items = frappe.db.get_all("Sales Invoice Item", fields=["*"])
-    salesinvoice_taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"])
-
-    salesinvoices_docs = []
-    salesinvoices_meta = frappe.get_meta("Sales Invoice")
+    salesinvoices = frappe.get_all("Sales Invoice", fields=['*'], filters=filters)
 
     for salesinvoice in salesinvoices:
-        items = [item for item in salesinvoice_items if item["parent"] == salesinvoice["name"]]
-        taxes = [tax_item for tax_item in salesinvoice_taxes if tax_item["parent"] == salesinvoice["name"]]
+        currency = salesinvoice.get("currency")
 
-        salesinvoice["items"] = items
-        salesinvoice["taxes"] = taxes
-        salesinvoices_docs.append(salesinvoice)
+        for field in salesinvoice_meta.fields:
+            if field.fieldtype == "Currency" and salesinvoice.get(field.fieldname):
+                salesinvoice[field.fieldname] = frappe.utils.fmt_money(salesinvoice[field.fieldname], currency=currency)
+            # if field.fieldtype == "Date" and salesinvoice.get(field.fieldname):
+            #     salesinvoice[field.fieldname] = frappe.utils.formatdate(salesinvoice[field.fieldname], "dd-MM-yyyy")
 
-    for sales in salesinvoices_docs:
-        sales['grand_total'] = frappe.utils.fmt_money(sales.get('grand_total'), currency=sales.get('currency'))
-        sales['total'] = frappe.utils.fmt_money(sales.get('total'), currency=sales.get('currency'))
-        sales['rounded_total'] = frappe.utils.fmt_money(sales.get('rounded_total'), currency=sales.get('currency'))
-        sales['total_taxes_and_charges'] = frappe.utils.fmt_money(sales.get('total_taxes_and_charges'), currency=sales.get('currency'))
-        sales['posting_date'] = frappe.utils.formatdate(sales.get('posting_date'), "dd-MM-yyyy")
-        sales['due_date'] = frappe.utils.formatdate(sales.get('due_date'), "dd-MM-yyyy")
+        salesinvoice["items"] = frappe.get_all("Sales Invoice Item", fields=["*"], filters={"parent": salesinvoice["name"]})
+        salesinvoice["taxes"] = frappe.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": salesinvoice["name"]})
 
-        for item in sales['items']:
-            item['rate'] = frappe.utils.fmt_money(item['rate'], currency=sales.get('currency'))
-            item['amount'] = frappe.utils.fmt_money(item['amount'], currency=sales.get('currency'))
+        for item in salesinvoice["items"]:
+            for field in frappe.get_meta("Sales Invoice Item").fields:
+                if field.fieldtype == "Currency" and item.get(field.fieldname):
+                    item[field.fieldname] = frappe.utils.fmt_money(item[field.fieldname], currency=currency)
 
-        for tax in sales['taxes']:
-            tax['rate'] = frappe.utils.fmt_money(tax.get('rate', 0), currency=sales.get('currency'))
-            tax['tax_amount'] = frappe.utils.fmt_money(tax.get('tax_amount', 0), currency=sales.get('currency'))
-            tax['total'] = frappe.utils.fmt_money(tax.get('total', 0), currency=sales.get('currency'))
+        for tax in salesinvoice["taxes"]:
+            for field in frappe.get_meta("Sales Taxes and Charges").fields:
+                if field.fieldtype == "Currency" and tax.get(field.fieldname):
+                    tax[field.fieldname] = frappe.utils.fmt_money(tax[field.fieldname], currency=currency)
 
-        if sales.get('customer_address'):
-            address = frappe.get_doc('Address', sales['customer_address'])
-            sales['address_line1'] = address.address_line1
-            sales['address_line2'] = address.address_line2
-            sales['city'] = address.city
-            sales['country'] = address.country
-            sales['state'] = address.state
-            sales['phone_no'] = address.phone
-            sales['pincode'] = address.pincode
+        if salesinvoice.get('customer_address'):
+            address = frappe.get_doc('Address', salesinvoice['customer_address'])
+            for field in ["address_line1", "address_line2", "city", "state", "country", "phone", "pincode"]:
+                salesinvoice[field] = getattr(address, field, None)
 
     return {
-        "data": salesinvoices_docs,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in salesinvoices_meta.fields
-            ]
-        }
+        "meta": salesinvoice_meta.as_dict(),
+        "data": salesinvoices
     }
-
 
 
 @frappe.whitelist()
@@ -213,12 +151,8 @@ def get_issues():
     issue_meta = frappe.get_meta("Issue")  
     return {
         "data": issues,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in issue_meta.fields
-            ]
-        }
+        "meta": issue_meta.as_dict(),       
+      
     }
 
 
@@ -230,86 +164,54 @@ def get_shipments():
     if users_data:
         filters = {'customer': ['in', users_data]}
 
-    deliverynote = frappe.db.get_all("Delivery Note", fields=['*'], filters=filters)
-    deliverynote_items = frappe.db.get_all("Delivery Note Item", fields=["*"])
-    deliverynote_taxes = frappe.db.get_all("Sales Taxes and Charges", fields=["*"])
+    deliverynote_meta = frappe.get_meta("Delivery Note")
+    deliverynotes = frappe.get_all("Delivery Note", fields=['*'], filters=filters)
 
     deliverynote_docs = []
-    deliverynote_meta = frappe.get_meta("Delivery Note")
 
-    for dn in deliverynote:
-        items = [item for item in deliverynote_items if item["parent"] == dn["name"]]
-        taxes = [tax_item for tax_item in deliverynote_taxes if tax_item["parent"] == dn["name"]]
+    for delivery in deliverynotes:
+        delivery_items = frappe.get_all("Delivery Note Item", fields=["*"], filters={"parent": delivery["name"]})
+        delivery_taxes = frappe.get_all("Sales Taxes and Charges", fields=["*"], filters={"parent": delivery["name"]})
 
-        dn["items"] = items
-        dn["taxes"] = taxes
-        deliverynote_docs.append(dn)
+        currency = delivery.get("currency")
 
-    for delivery in deliverynote_docs:
-        delivery['grand_total'] = frappe.utils.fmt_money(delivery.get('grand_total'), currency=delivery.get('currency'))
-        delivery['posting_date'] = frappe.utils.formatdate(delivery.get('posting_date'), "dd-MM-yyyy")
-        delivery['total'] = frappe.utils.fmt_money(delivery.get('total'), currency=delivery.get('currency'))
-        delivery['rounded_total'] = frappe.utils.fmt_money(delivery.get('rounded_total'), currency=delivery.get('currency'))
-        delivery['total_taxes_and_charges'] = frappe.utils.fmt_money(delivery.get('total_taxes_and_charges'), currency=delivery.get('currency'))
+        for field in deliverynote_meta.fields:
+            if field.fieldtype == "Currency" and delivery.get(field.fieldname):
+                delivery[field.fieldname] = frappe.utils.fmt_money(delivery[field.fieldname], currency=currency)
+            # elif field.fieldtype == "Date" and delivery.get(field.fieldname):
+            #     delivery[field.fieldname] = frappe.utils.formatdate(delivery[field.fieldname], "dd-MM-yyyy")
 
-        for item in delivery['items']:
-            item['rate'] = frappe.utils.fmt_money(item['rate'], currency=delivery.get('currency'))
-            item['amount'] = frappe.utils.fmt_money(item['amount'], currency=delivery.get('currency'))
+     
+        for item in delivery_items:
+            for field in frappe.get_meta("Delivery Note Item").fields:
+                if field.fieldtype == "Currency" and item.get(field.fieldname):
+                    item[field.fieldname] = frappe.utils.fmt_money(item[field.fieldname], currency=currency)
 
-        for tax in delivery['taxes']:
-            tax['rate'] = frappe.utils.fmt_money(tax.get('rate', 0), currency=delivery.get('currency'))
-            tax['tax_amount'] = frappe.utils.fmt_money(tax.get('tax_amount', 0), currency=delivery.get('currency'))
-            tax['total'] = frappe.utils.fmt_money(tax.get('total', 0), currency=delivery.get('currency'))
-
+        
+        for tax in delivery_taxes:
+            for field in frappe.get_meta("Sales Taxes and Charges").fields:
+                if field.fieldtype == "Currency" and tax.get(field.fieldname):
+                    tax[field.fieldname] = frappe.utils.fmt_money(tax[field.fieldname], currency=currency)
+        
         if delivery.get('customer_address'):
             address = frappe.get_doc('Address', delivery['customer_address'])
-            delivery['address_line1'] = address.address_line1
-            delivery['address_line2'] = address.address_line2
-            delivery['city'] = address.city
-            delivery['country'] = address.country
-            delivery['state'] = address.state
-            delivery['phone_no'] = address.phone
-            delivery['pincode'] = address.pincode
+            for field in ["address_line1", "address_line2", "city", "state", "country", "phone", "pincode"]:
+                delivery[field] = getattr(address, field, None)
+
+        delivery['items'] = delivery_items
+        delivery['taxes'] = delivery_taxes
+        deliverynote_docs.append(delivery)
 
     return {
-        "data": deliverynote_docs,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in deliverynote_meta.fields
-            ]
-        }
+        "meta": deliverynote_meta.as_dict(),
+        "data": deliverynote_docs
     }
-
-
-@frappe.whitelist()
-def get_material_request():
-    materialreq = frappe.db.get_all("Material Request", fields=['*'])
-    materialreq_items = frappe.db.get_all("Material Request Item", fields=["*"])
-    materialreq_docs = []
-    for mr in materialreq:
-        items = []
-        for item in materialreq_items:
-            if item["parent"] == mr["name"]:
-                items.append(item)
-        mr["items"] = items
-        materialreq_docs.append(mr)
-    for material in materialreq_docs:
-       material['grand_total'] = frappe.utils.fmt_money(material.get('grand_total'), currency=material.get('currency'))    
-       material['transaction_date'] = frappe.utils.formatdate(material.get('transaction_date'), "dd-MM-yyyy")
-       material['schedule_date'] = frappe.utils.formatdate(material.get('schedule_date'), "dd-MM-yyyy")    
-       for item in material['items']:
-            item['rate'] = frappe.utils.fmt_money(item['rate'], currency=material.get('currency'))
-            item['amount'] = frappe.utils.fmt_money(item['amount'], currency=material.get('currency'))
-    return materialreq_docs
 
 @frappe.whitelist()
 def get_username():
    current_user=frappe.session.user
    user_detail = frappe.get_all("User", filters={'name': current_user}, fields=['full_name'])
    return user_detail[0].full_name
-
-
 
 @frappe.whitelist()
 def get_logged_user():
@@ -321,7 +223,6 @@ def get_navbar_routes():
     check=frappe.get_single('Go1 Navbar Settings')
     user_details = frappe.get_all("Go1 Navbar Item", filters={'parent': 'Go1 Navbar Settings','enabled':1}, fields=['*'])
     return user_details
-
 
 
 @frappe.whitelist()
@@ -351,8 +252,6 @@ def getcustomer():
     return customers_details
 
 
-
-
 @frappe.whitelist()
 def get_address():
     users_data = getcustomer()
@@ -376,12 +275,45 @@ def get_address():
 
     return {
         "data": address_data,
-        "meta": {
-            "fields": [
-                {"label": field.label, "fieldname": field.fieldname, "fieldtype": field.fieldtype, "in_list_view": field.in_list_view}
-                for field in address_meta.fields
-            ]
-        }
+        "meta": address_meta.as_dict(),       
     }
+
+@frappe.whitelist()
+def get_projects():
+    projects_meta = frappe.get_meta("Project")
+    users_data = getcustomer()
+    filters = {}
+    if users_data:
+        filters = {'customer': ['in', users_data]}
+    projects = frappe.get_all("Project", fields=["*"], filters=filters)
+
+    for project in projects:
+        company = project.get("company")
+        default_currency = None
+        if company:
+            default_currency = frappe.db.get_value("Company", company, "default_currency")
+
+        # Format currency fields in Project
+        for field in projects_meta.fields:
+            if field.fieldtype == "Currency" and project.get(field.fieldname):
+                project[field.fieldname] = frappe.utils.fmt_money(
+                    project[field.fieldname],
+                    currency=default_currency or frappe.defaults.get_global_default("currency")
+                )
+        
+        # Get all tasks related to the current project
+        project_name = project.get("name")
+        if project_name:
+            tasks = frappe.get_all("Task",fields=["*"],filters={"project": project_name})
+            project["tasks"] = tasks
+
+    return {
+        "meta": projects_meta.as_dict(),
+        "data": projects
+    }
+
+    
+
+
 
 

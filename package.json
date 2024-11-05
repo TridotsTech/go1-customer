@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Customer Details",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "cd frontend && yarn install",
@@ -12,5 +11,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "vuedraggable": "^4.1.0"
+  }
 }

@@ -12,12 +12,7 @@ const routes = [
     name: 'Login',
     path: '/account/login',
     component: () => import('@/pages/Login.vue'),
-  },
-  {
-    name: 'Main',
-    path: '/Main',
-    component: () => import('@/pages/main.vue'),
-  },
+  }, 
   {
     name: 'Dashboard',
     path: '/Dashboard',
@@ -69,6 +64,11 @@ const routes = [
     component: () => import('@/pages/Addresses.vue'),
   },
   {
+    name: 'Address New',
+    path: '/Address_New',
+    component: () => import('@/pages/Address New.vue'),
+  },
+  {
     name: 'AddressDetails',
     path: '/AddressDetails/:id',
     component: () => import('@/pages/Address Details.vue'),
@@ -87,6 +87,16 @@ const routes = [
     name: 'IssueDetails',
     path: '/IssueDetails/:id',
     component: () => import('@/pages/Issue Details.vue'),
+  },
+  {
+    name: 'Projets',
+    path: '/Projects',
+    component: () => import('@/pages/Projects.vue'),
+  },
+  {
+    name: 'ProjectDetails',
+    path: '/Projects/:id',
+    component: () => import('@/pages/Project Details.vue'),
   },
 
 ]

@@ -6,17 +6,17 @@
         <div class="flex-1 flex flex-col h-full overflow-auto">
             <AppHeader />
             <div class="dashboard  flex-1 overflow-auto px-28 py-10">
-                <div class="bg-white border rounded-lg p-6">
-                    <div class="float-left mb-1 text-9xl font-bold text-gray-800 -mt-2">
-                        <p>Address</p>
-                        <p class="text-9xl font-bold text-gray-600" style="font-size: 1rem">{{ subject }}</p>
+                <div class="bg-white border rounded-lg">
+                    <div class="flex border-b h-12 justify-between items-center p-6">
+                        <div>
+                            <p class="text-9xl font-bold text-gray-800">Address</p>                            
+                        </div>
+                        <Button v-if="!isEditing" variant="solid" theme="gray" size="sm" label="Edit" :disabled="false" 
+                            @click="startEditing" 
+                        />
                     </div>
-                    <div class="float-right mb-1">
-                        <Button v-if="!isEditing" variant="solid" theme="gray" size="md" label="Edit" :disabled="false"
-                            @click="startEditing" />
-                    </div>
-                    <div class="border-b pb-7 pt-10"></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 mt-5 gap-6">
+                
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                         <div>
                             <FormControl type="text" size="md" variant="subtle" label="Address Title"
                                 :disabled="!isEditing" v-model="address_title" class="mb-5" />
@@ -46,10 +46,10 @@
                     </div>
 
                     <div>
-                        <div v-if="isEditing"  class="flex justify-end gap-4 mt-4">
-                            <Button variant="subtle" theme="gray" size="md" label="Discard" :disabled="false"
+                        <div v-if="isEditing"  class="flex justify-end gap-4 p-6">
+                            <Button variant="subtle" theme="gray" size="sm" label="Discard" :disabled="false"
                                 @click="cancelEditing" />
-                            <Button variant="solid" theme="gray" size="md" label="Submit" :disabled="false"
+                            <Button variant="solid" theme="gray" size="sm" label="Submit" :disabled="false"
                                 @click="submitChanges" />
                         </div>
                     </div>
@@ -64,7 +64,7 @@ import AppSidebar from '@/components/Layouts/AppSidebar.vue'
 import AppHeader from '@/components/Layouts/AppHeader.vue'
 
 import { ref, onMounted } from 'vue';
-import { createResource, Button, FormControl } from 'frappe-ui';
+import { createResource, FormControl } from 'frappe-ui';
 import { useRouter, useRoute } from 'vue-router';
 
 

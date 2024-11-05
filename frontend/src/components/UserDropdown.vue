@@ -48,9 +48,11 @@ const __ = (text) => text;
 
 const users = createResource({
     url: 'go1_customer.go1_customer.go1.get_username',
-    cache: ['true']
+    cache: true,
 });
-users.fetch();
+if (!users.data) {    
+    users.fetch();
+}
 const logged_users = users;
 
 

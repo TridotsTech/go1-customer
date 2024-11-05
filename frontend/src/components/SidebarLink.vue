@@ -1,5 +1,5 @@
 <template>
-    <div v-if="dynamicsApp.data && dynamicsApp.data.length" class="grid grid-cols-1 gap-0.5">
+    <div v-if="sortedData.length" class="grid grid-cols-1 gap-0.5">
         <div v-for="(row, index) in dynamicsApp.data" :key="index">
             <Button 
                 @click="handleButtonClick(row.route)" 
@@ -16,7 +16,7 @@
                 <template v-else>
                     <div class="flex items-center ml-[-90px]">
                         <div style="float:left">
-                            <FeatherIcon class="w-4 text-black" stroke="black" stroke-width="1" :name="row.icon" />
+                            <FeatherIcon class="w-4 text-black" stroke="black" :stroke-width="1" :name="row.icon" />
                         </div>
                         <div class="flex-shrink-0 text-sm duration-300 ease-in-out ml-2 w-auto opacity-100" style="float:left;">
                             {{ row.title }}
@@ -30,7 +30,7 @@
 
 <script setup>
 import { Button, createResource } from 'frappe-ui';
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps({
@@ -46,6 +46,10 @@ const dynamicsApp = createResource({
     auto: true
 });
 
+
+const sortedData = computed(() => {
+    return dynamicsApp.data ? dynamicsApp.data.sort((a, b) => a.idx - b.idx) : [];
+});
 
 const router = useRouter();
 const route = useRoute(); 

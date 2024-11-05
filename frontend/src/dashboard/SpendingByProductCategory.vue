@@ -100,6 +100,3 @@ setup() {
 };
 </script>
 
-<style scoped>
-</style>
-  
