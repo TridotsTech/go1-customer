@@ -1,0 +1,101 @@
+[
+ {
+  "application_logo": null,
+  "docstatus": 0,
+  "doctype": "Go1 Navbar Settings",
+  "help_dropdown": [],
+  "logo_width": 0,
+  "modified": "2024-11-04 15:06:38.719180",
+  "name": "Go1 Navbar Settings",
+  "settings_dropdown": [
+   {
+    "enabled": 1,
+    "icon": "layout",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": null,
+    "role": null,
+    "route": "/Dashboard",
+    "title": "Dashboard"
+   },
+   {
+    "enabled": 1,
+    "icon": "book",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Quotation",
+    "role": null,
+    "route": "/Quotations",
+    "title": "Quotation"
+   },
+   {
+    "enabled": 1,
+    "icon": "shopping-cart",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Sales Order",
+    "role": null,
+    "route": "/Orders",
+    "title": "Orders"
+   },
+   {
+    "enabled": 1,
+    "icon": "file",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Sales Invoice",
+    "role": null,
+    "route": "/Invoices",
+    "title": "Invoice"
+   },
+   {
+    "enabled": 1,
+    "icon": "package",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Delivery Note",
+    "role": null,
+    "route": "/Shipments",
+    "title": "Shipments"
+   },
+   {
+    "enabled": 1,
+    "icon": "help-circle",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Issue",
+    "role": null,
+    "route": "/Issues",
+    "title": "Tickets"
+   },
+   {
+    "enabled": 1,
+    "icon": "home",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Address",
+    "role": null,
+    "route": "/Addresses",
+    "title": " Addresses"
+   },
+   {
+    "enabled": 1,
+    "icon": "clipboard",
+    "parent": "Go1 Navbar Settings",
+    "parentfield": "settings_dropdown",
+    "parenttype": "Go1 Navbar Settings",
+    "reference": "Project",
+    "role": null,
+    "route": "/Projects",
+    "title": "Projects"
+   }
+  ]
+ }
+]
